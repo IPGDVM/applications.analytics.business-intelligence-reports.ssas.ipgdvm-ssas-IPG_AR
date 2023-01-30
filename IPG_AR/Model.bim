@@ -1,0 +1,1522 @@
+{
+  "name": "SemanticModel",
+  "compatibilityLevel": 1500,
+  "model": {
+    "culture": "en-US",
+    "dataSources": [
+      {
+        "name": "Custom",
+        "connectionString": "Provider=MSDASQL;Persist Security Info=False;Initial Catalog=HSD_ES;DSN=iBI DaaS",
+        "impersonationMode": "impersonateServiceAccount",
+        "annotations": [
+          {
+            "name": "ConnectionEditUISource",
+            "value": "Others"
+          }
+        ]
+      }
+    ],
+    "tables": [
+      {
+        "name": "QueryAR",
+        "columns": [
+          {
+            "name": "id",
+            "dataType": "int64",
+            "sourceColumn": "id",
+            "sourceProviderType": "BigInt"
+          },
+          {
+            "name": "title",
+            "dataType": "string",
+            "sourceColumn": "title",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "status",
+            "dataType": "string",
+            "sourceColumn": "status",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "owner",
+            "dataType": "string",
+            "sourceColumn": "owner",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "submitted_date",
+            "dataType": "dateTime",
+            "sourceColumn": "submitted_date",
+            "formatString": "General Date",
+            "sourceProviderType": "Date"
+          },
+          {
+            "name": "ww_eta",
+            "dataType": "string",
+            "sourceColumn": "ww_eta",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "parent_id",
+            "dataType": "int64",
+            "sourceColumn": "parent_id",
+            "sourceProviderType": "BigInt"
+          },
+          {
+            "name": "type",
+            "dataType": "string",
+            "sourceColumn": "type",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "sv_tracking",
+            "dataType": "string",
+            "sourceColumn": "sv_tracking",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "ww_submitted_date",
+            "dataType": "string",
+            "sourceColumn": "ww_submitted_date"
+          },
+          {
+            "type": "calculated",
+            "name": "ww_submitted_date_num",
+            "dataType": "int64",
+            "isDataTypeInferred": false,
+            "expression": "left(QueryAR[ww_submitted_date], 4) & right(QueryAR[ww_submitted_date],2)"
+          },
+          {
+            "name": "sub_status",
+            "dataType": "string",
+            "sourceColumn": "sub_status"
+          },
+          {
+            "name": "url",
+            "dataType": "string",
+            "sourceColumn": "url",
+            "dataCategory": "WebUrl"
+          },
+          {
+            "type": "calculated",
+            "name": "UniqueID",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": "QueryAR[id] & QueryAR[ww]"
+          },
+          {
+            "type": "calculated",
+            "name": "days_open",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "expression": [
+              " if(QueryAR[status] = \"open\", ",
+              "\tDATEDIFF(QueryAR[submitted_date], TODAY(),DAY))"
+            ]
+          },
+          {
+            "type": "calculated",
+            "name": "days_closed",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "expression": [
+              " if(QueryAR[status] = \"closed\", ",
+              "\tDATEDIFF(QueryAR[submitted_date], QueryAR[closed_date],DAY))"
+            ]
+          },
+          {
+            "name": "closed_date",
+            "dataType": "dateTime",
+            "sourceColumn": "closed_date"
+          },
+          {
+            "name": "updated_date",
+            "dataType": "dateTime",
+            "sourceColumn": "updated_date"
+          },
+          {
+            "type": "calculated",
+            "name": "days_last_update",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "expression": [
+              " if(QueryAR[status] = \"open\", ",
+              "\tDATEDIFF(QueryAR[updated_date], TODAY(),DAY))"
+            ]
+          },
+          {
+            "name": "IPFamily",
+            "dataType": "string",
+            "sourceColumn": "IPFamily"
+          },
+          {
+            "name": "ww",
+            "dataType": "int64",
+            "sourceColumn": "ww"
+          },
+          {
+            "name": "priority",
+            "dataType": "string",
+            "sourceColumn": "priority"
+          },
+          {
+            "type": "calculated",
+            "name": "IsCurrentWW",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "expression": "if(QueryAR[ww] = QueryAR[currentww], 1, 0)"
+          },
+          {
+            "name": "currentww",
+            "dataType": "int64",
+            "sourceColumn": "currentww"
+          },
+          {
+            "name": "release",
+            "dataType": "string",
+            "isHidden": true,
+            "sourceColumn": "release"
+          },
+          {
+            "name": "IscountforexistingAR",
+            "dataType": "int64",
+            "sourceColumn": "IscountforexistingAR"
+          },
+          {
+            "name": "from_release",
+            "dataType": "string",
+            "sourceColumn": "from_release"
+          },
+          {
+            "name": "tenant",
+            "dataType": "string",
+            "sourceColumn": "tenant"
+          },
+          {
+            "type": "calculated",
+            "name": "IpSupplier",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": [
+              "IF(",
+              "\tISBLANK(",
+              "\t\tRELATED(Gladius[ip_supplier])",
+              "\t),",
+              "\tBLANK(),",
+              "\tRELATED(Gladius[ip_supplier])",
+              ")",
+              "\t"
+            ]
+          },
+          {
+            "type": "calculated",
+            "name": "SubOrg",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": [
+              "IF(",
+              "\tISBLANK(",
+              "\t\tRELATED(Gladius[devsuborg])",
+              "\t),",
+              "\tBLANK(),",
+              "\tRELATED(Gladius[devsuborg])",
+              ")",
+              "\t"
+            ]
+          },
+          {
+            "type": "calculated",
+            "name": "Configuration",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": "QueryAR[release]"
+          },
+          {
+            "type": "calculated",
+            "name": "WWSeqNbr",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "expression": "LOOKUPVALUE(V_DIM_IntelWWSeqNbr[WWSeqNbr],V_DIM_IntelWWSeqNbr[Intel Year-Work Week],[ww])"
+          },
+          {
+            "type": "calculated",
+            "name": "CurrentwwSeqNbr",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "expression": "LOOKUPVALUE(V_DIM_IntelWWSeqNbr[WWSeqNbr],V_DIM_IntelWWSeqNbr[Intel Year-Work Week],[currentww])"
+          },
+          {
+            "type": "calculated",
+            "name": "13weeksSnapshotFilter",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "expression": "if([WWSeqNbr]>[CurrentWWSeqNbr]-13, 1, 0)"
+          },
+          {
+            "type": "calculated",
+            "name": "Intel Month",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": "related(QueryIntelCalendar[Intel Month Name])"
+          },
+          {
+            "type": "calculated",
+            "name": "IntelMonthNbr",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "expression": "related(QueryIntelCalendar[Intel Month])"
+          },
+          {
+            "type": "calculated",
+            "name": "IntelYearQuarter",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": [
+              "RELATED(QueryIntelCalendar[Year_Quarter])",
+              ""
+            ]
+          },
+          {
+            "type": "calculated",
+            "name": "SubmittedYear_Quarter",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": "QueryAR[IntelYearQuarter]"
+          },
+          {
+            "type": "calculated",
+            "name": "SubmittedYear",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": "Left([ww_submitted_date_num], 4)"
+          },
+          {
+            "name": "from_tenant",
+            "dataType": "string",
+            "sourceColumn": "from_tenant"
+          },
+          {
+            "name": "project",
+            "dataType": "string",
+            "sourceColumn": "project"
+          },
+          {
+            "name": "SoC Die2",
+            "dataType": "string",
+            "isHidden": true,
+            "sourceColumn": "SoC Die2"
+          },
+          {
+            "type": "calculated",
+            "name": "SoC Die1",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": "IF(ISBLANK(QueryAR[SoC Die2]), RELATED(IPCatalogReleaseCentral[release.lead_product]), QueryAR[SoC Die2])"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "QueryAR",
+            "dataView": "full",
+            "source": {
+              "type": "query",
+              "query": [
+                "select",
+                "a.ww,",
+                "a.tenant,",
+                "a.from_tenant,",
+                "a.currentww,",
+                "a.id,",
+                "a.title,",
+                "a.IPFamily,",
+                "a.sub_status,",
+                "a.status,",
+                "a.priority,",
+                "a.owner,",
+                "a.submitted_date,",
+                "a.closed_date,",
+                "a.updated_date,",
+                "a.ww_submitted_date,",
+                "a.ww_eta,",
+                "a.parent_id,",
+                "a.type,",
+                "a.sv_tracking,",
+                "a.release,",
+                "a.from_release,",
+                "a.url,",
+                "a.IscountforexistingAR,",
+                "a.project,",
+                "case ",
+                "\twhen (a.from_release is not null and a.from_release <> '' and b.family is not null and b.family <> '')",
+                "\t\tthen b.family",
+                "\telse",
+                "\t\ta.project",
+                "end as [SoC Die2]",
+                "from [v_ipg_AR_historical_all] as a",
+                "left join ",
+                "",
+                "(select",
+                "[release.product_type]",
+                ",[release.name]",
+                ",[family]",
+                "from[ES.release_central.release]",
+                "where [release.product_type] like '%soc%'",
+                ") as b",
+                "on a.from_release = b.[release.name]"
+              ],
+              "dataSource": "Custom"
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select",
+                  "a.ww,",
+                  "a.tenant,",
+                  "a.from_tenant,",
+                  "a.currentww,",
+                  "a.id,",
+                  "a.title,",
+                  "a.IPFamily,",
+                  "a.sub_status,",
+                  "a.status,",
+                  "a.priority,",
+                  "a.owner,",
+                  "a.submitted_date,",
+                  "a.closed_date,",
+                  "a.updated_date,",
+                  "a.ww_submitted_date,",
+                  "a.ww_eta,",
+                  "a.parent_id,",
+                  "a.type,",
+                  "a.sv_tracking,",
+                  "a.release,",
+                  "a.from_release,",
+                  "a.url,",
+                  "a.IscountforexistingAR,",
+                  "a.project,",
+                  "case ",
+                  "\twhen (a.from_release is not null and a.from_release <> '' and b.family is not null and b.family <> '')",
+                  "\t\tthen b.family",
+                  "\telse",
+                  "\t\ta.project",
+                  "end as [SoC Die2]",
+                  "from [v_ipg_AR_historical_all] as a",
+                  "left join ",
+                  "",
+                  "(select",
+                  "[release.product_type]",
+                  ",[release.name]",
+                  ",[family]",
+                  "from[ES.release_central.release]",
+                  "where [release.product_type] like '%soc%'",
+                  ") as b",
+                  "on a.from_release = b.[release.name]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "measures": [
+          {
+            "name": "WontDoCount",
+            "expression": [
+              " CALCULATE(COUNTA(QueryAR[id]), QueryAR[status] = \"wont_do\", QueryAR[IsCurrentWW] = 1, QueryAR[IscountforexistingAR] = 1) + 0",
+              ""
+            ]
+          },
+          {
+            "name": "OpenCount",
+            "expression": " CALCULATE(COUNTA(QueryAR[id]), QueryAR[status] = \"open\" , QueryAR[IsCurrentWW] = 1, QueryAR[IscountforexistingAR] = 1) + 0"
+          },
+          {
+            "name": "ClosedCount",
+            "expression": " CALCULATE(COUNTA(QueryAR[id]),  QueryAR[status] = \"closed\", QueryAR[IsCurrentWW] = 1, QueryAR[IscountforexistingAR] = 1) + 0"
+          },
+          {
+            "name": "days_open_avg",
+            "expression": "CALCULATE(AVERAGE(QueryAR[days_open]), QueryAR[IscountforexistingAR] = 1)+0"
+          },
+          {
+            "name": "days_closed_avg",
+            "expression": " CALCULATE(average(QueryAR[days_closed]), QueryAR[IscountforexistingAR] = 1)+0"
+          },
+          {
+            "name": "days_last_updated_avg",
+            "expression": "CALCULATE(AVERAGE(QueryAR[days_last_update]), QueryAR[IscountforexistingAR] = 1)+0"
+          },
+          {
+            "name": "OpenClosedCt",
+            "expression": " CALCULATE([OpenCount]+[ClosedCount], QueryAR[IscountforexistingAR] = 1) + 0"
+          },
+          {
+            "name": "ShowstopperCount",
+            "expression": "calculate(counta(QueryAR[id]), QueryAR[priority] = \"1-showstopper\",QueryAR[status] = \"open\", QueryAR[IsCurrentWW] = 1, QueryAR[IscountforexistingAR] = 1) + 0"
+          },
+          {
+            "name": "HighCount",
+            "expression": "calculate(counta(QueryAR[id]), QueryAR[priority] = \"2-high\",QueryAR[status] = \"open\", QueryAR[IsCurrentWW] = 1, QueryAR[IscountforexistingAR] = 1) + 0"
+          },
+          {
+            "name": "MediumCount",
+            "expression": "calculate(counta(QueryAR[id]), QueryAR[priority] = \"3-medium\",QueryAR[status] = \"open\", QueryAR[IsCurrentWW] = 1, QueryAR[IscountforexistingAR] = 1) + 0"
+          },
+          {
+            "name": "LowCount",
+            "expression": "calculate(counta(QueryAR[id]), QueryAR[priority] = \"4-low\",QueryAR[status] = \"open\", QueryAR[IsCurrentWW] = 1, QueryAR[IscountforexistingAR] = 1) + 0"
+          },
+          {
+            "name": "TotalAR",
+            "expression": [
+              "",
+              "CALCULATE( COUNTA(QueryAR[id]), QueryAR[IscountforexistingAR] = 1)+0",
+              ""
+            ]
+          },
+          {
+            "name": "OpenNoPriorityCount",
+            "expression": "calculate(COUNTA(QueryAR[id]), ISBLANK(QueryAR[priority]),QueryAR[status] = \"open\", QueryAR[IsCurrentWW] = 1, QueryAR[IscountforexistingAR] = 1) + 0"
+          },
+          {
+            "name": "TotalCurrentAR",
+            "expression": " CALCULATE(COUNTA(QueryAR[id]), QueryAR[IsCurrentWW] = 1, QueryAR[IscountforexistingAR] = 1) + 0"
+          },
+          {
+            "name": "TotalCount",
+            "expression": " countA(QueryAR[id]) + 0"
+          },
+          {
+            "name": "TotalCountCurrentWeek",
+            "expression": " CALCULATE(DISTINCTCOUNT(QueryAR[id]), QueryAR[IsCurrentWW] = 1) + 0"
+          },
+          {
+            "name": "TotalCount13Weeks",
+            "expression": " CALCULATE(countA(QueryAR[id]), QueryAR[13weeksSnapshotFilter] = 1) + 0"
+          },
+          {
+            "name": "TotalCountCurrentWeek_withoutZero",
+            "expression": " CALCULATE(DISTINCTCOUNT(QueryAR[id]), QueryAR[IsCurrentWW] = 1)"
+          },
+          {
+            "name": "TotalCurrentAR_withoutZero",
+            "expression": " CALCULATE(COUNTA(QueryAR[id]), QueryAR[IsCurrentWW] = 1, QueryAR[IscountforexistingAR] = 1)"
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "select",
+              "a.ww,",
+              "a.tenant,",
+              "a.from_tenant,",
+              "a.currentww,",
+              "a.id,",
+              "a.title,",
+              "a.IPFamily,",
+              "a.sub_status,",
+              "a.status,",
+              "a.priority,",
+              "a.owner,",
+              "a.submitted_date,",
+              "a.closed_date,",
+              "a.updated_date,",
+              "a.ww_submitted_date,",
+              "a.ww_eta,",
+              "a.parent_id,",
+              "a.type,",
+              "a.sv_tracking,",
+              "a.release,",
+              "a.from_release,",
+              "a.url,",
+              "a.IscountforexistingAR,",
+              "a.project,",
+              "case ",
+              "\twhen (a.from_release is not null and a.from_release <> '' and b.family is not null and b.family <> '')",
+              "\t\tthen b.family",
+              "\telse",
+              "\t\ta.project",
+              "end as [SoC Die2]",
+              "from [v_ipg_AR_historical_all] as a",
+              "left join ",
+              "",
+              "(select",
+              "[release.product_type]",
+              ",[release.name]",
+              ",[family]",
+              "from[ES.release_central.release]",
+              "where [release.product_type] like '%soc%'",
+              ") as b",
+              "on a.from_release = b.[release.name]"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "QueryAR"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select",
+              "a.ww,",
+              "a.tenant,",
+              "a.from_tenant,",
+              "a.currentww,",
+              "a.id,",
+              "a.title,",
+              "a.IPFamily,",
+              "a.sub_status,",
+              "a.status,",
+              "a.priority,",
+              "a.owner,",
+              "a.submitted_date,",
+              "a.closed_date,",
+              "a.updated_date,",
+              "a.ww_submitted_date,",
+              "a.ww_eta,",
+              "a.parent_id,",
+              "a.type,",
+              "a.sv_tracking,",
+              "a.release,",
+              "a.from_release,",
+              "a.url,",
+              "a.IscountforexistingAR,",
+              "a.project,",
+              "case ",
+              "\twhen (a.from_release is not null and a.from_release <> '' and b.family is not null and b.family <> '')",
+              "\t\tthen b.family",
+              "\telse",
+              "\t\ta.project",
+              "end as [SoC Die2]",
+              "from [v_ipg_AR_historical_all] as a",
+              "left join ",
+              "",
+              "(select",
+              "[release.product_type]",
+              ",[release.name]",
+              ",[family]",
+              "from[ES.release_central.release]",
+              "where [release.product_type] like '%soc%'",
+              ") as b",
+              "on a.from_release = b.[release.name]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "DynamicAxis",
+        "columns": [
+          {
+            "type": "calculatedTableColumn",
+            "name": "AxisId",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[AxisId]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "AxisAttribute",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[AxisAttribute]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "AxisValue",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[AxisValue]"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "CalculatedTable 1",
+            "source": {
+              "type": "calculated",
+              "expression": [
+                " UNION( ",
+                "\tSELECTCOLUMNS(\t\t",
+                "\t\tQueryAR ",
+                "\t\t,\"AxisId\", QueryAR[UniqueID] \t",
+                "\t\t,\"AxisAttribute\", \"ww_submitted\"",
+                "\t\t,\"AxisValue\", QueryAR[ww_submitted_date_num]),",
+                " \t",
+                " \tSELECTCOLUMNS(",
+                " \t\tQueryAR",
+                " \t\t,\"AxisId\", QueryAR[UniqueID] ",
+                " \t\t,\"AxisAttribute\", \"IPFamily\"",
+                " \t\t,\"AxisValue\", QueryAR[IPFamily]),",
+                " \t\t",
+                " \tSELECTCOLUMNS(",
+                " \t\tQueryAR",
+                " \t\t,\"AxisId\", QueryAR[UniqueID] ",
+                " \t\t,\"AxisAttribute\", \"status\"",
+                " \t\t,\"AxisValue\", QueryAR[status]),",
+                " \t\t",
+                "  \tSELECTCOLUMNS(",
+                " \t\tQueryAR",
+                " \t\t,\"AxisId\", QueryAR[UniqueID] ",
+                " \t\t,\"AxisAttribute\", \"priority\"",
+                " \t\t,\"AxisValue\", QueryAR[priority]),",
+                " \t\t",
+                " \tSELECTCOLUMNS(",
+                " \t\tQueryAR",
+                " \t\t,\"AxisId\", QueryAR[UniqueID] ",
+                " \t\t,\"AxisAttribute\", \"IPSupplier\"",
+                " \t\t,\"AxisValue\", QueryAR[IpSupplier]),",
+                " \t\t",
+                " \tSELECTCOLUMNS(",
+                " \t\tQueryAR",
+                " \t\t,\"AxisId\", QueryAR[UniqueID] ",
+                " \t\t,\"AxisAttribute\", \"SubOrg\"",
+                " \t\t,\"AxisValue\", QueryAR[SubOrg]),",
+                " \t\t",
+                " \tSELECTCOLUMNS(",
+                " \t\tQueryAR",
+                " \t\t,\"AxisId\", QueryAR[UniqueID] ",
+                " \t\t,\"AxisAttribute\", \"SoC Die\"",
+                " \t\t,\"AxisValue\", QueryAR[SoC Die1])",
+                " \t\t",
+                " )",
+                ""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "QueryLastProcessed",
+        "columns": [
+          {
+            "name": "lastprocesseddate",
+            "dataType": "dateTime",
+            "sourceColumn": "lastprocesseddate",
+            "formatString": "General Date",
+            "sourceProviderType": "Date"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "QueryLastProcessed",
+            "dataView": "full",
+            "source": {
+              "type": "query",
+              "query": [
+                "select distinct",
+                "dateadd(hour, -8, getutcdate()) as lastprocesseddate",
+                "from [IPG_devsuborg_cached]"
+              ],
+              "dataSource": "Custom"
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select distinct",
+                  "dateadd(hour, -8, getutcdate()) as lastprocesseddate",
+                  "from [IPG_devsuborg_cached]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "select distinct",
+              "dateadd(hour, -8, getutcdate()) as lastprocesseddate",
+              "from [IPG_devsuborg_cached]"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "QueryLastProcessed"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select distinct",
+              "dateadd(hour, -8, getutcdate()) as lastprocesseddate",
+              "from [IPG_devsuborg_cached]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "DynamicLegend",
+        "columns": [
+          {
+            "type": "calculatedTableColumn",
+            "name": "LegendId",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[LegendId]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "LegendAttribute",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[LegendAttribute]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "LegendValue",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[LegendValue]"
+          },
+          {
+            "type": "calculated",
+            "name": "LegendOrdered",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": [
+              "if(ISBLANK(DynamicLegend[LegendValue])",
+              " || DynamicLegend[LegendValue] in {\"null\",\"~Unknown\"},BLANK(),DynamicLegend[LegendValue]",
+              ")",
+              ""
+            ]
+          }
+        ],
+        "partitions": [
+          {
+            "name": "CalculatedTable 1",
+            "source": {
+              "type": "calculated",
+              "expression": [
+                " UNION( ",
+                "\tSELECTCOLUMNS(\t\t",
+                "\t\tQueryAR ",
+                "\t\t,\"LegendId\", QueryAR[UniqueID] \t",
+                "\t\t,\"LegendAttribute\", \"ww_submitted\"",
+                "\t\t,\"LegendValue\", QueryAR[ww_submitted_date_num]),",
+                " \t",
+                " \tSELECTCOLUMNS(",
+                " \t\tQueryAR",
+                " \t\t,\"LegendId\", QueryAR[UniqueID] ",
+                " \t\t,\"LegendAttribute\", \"IPFamily\"",
+                " \t\t,\"LegendValue\", QueryAR[IPFamily]),",
+                " \t\t",
+                "  \tSELECTCOLUMNS(",
+                " \t\tQueryAR",
+                " \t\t,\"LegendId\", QueryAR[UniqueID] ",
+                " \t\t,\"LegendAttribute\", \"status\"",
+                " \t\t,\"LegendValue\", QueryAR[status]),",
+                " \t\t",
+                "   \tSELECTCOLUMNS(",
+                " \t\tQueryAR",
+                " \t\t,\"LegendId\", QueryAR[UniqueID] ",
+                " \t\t,\"LegendAttribute\", \"priority\"",
+                " \t\t,\"LegendValue\", QueryAR[priority]),",
+                " \t\t",
+                "   \tSELECTCOLUMNS(",
+                " \t\tQueryAR",
+                " \t\t,\"LegendId\", QueryAR[UniqueID] ",
+                " \t\t,\"LegendAttribute\", \"release\"",
+                " \t\t,\"LegendValue\", QueryAR[release])",
+                "",
+                "",
+                "",
+                "",
+                ")"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Gladius",
+        "columns": [
+          {
+            "name": "ip_supplier",
+            "dataType": "string",
+            "sourceColumn": "ip_supplier",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "devsuborg",
+            "dataType": "string",
+            "sourceColumn": "devsuborg",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "old_family",
+            "dataType": "string",
+            "sourceColumn": "old_family",
+            "sourceProviderType": "VarChar"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Gladius",
+            "dataView": "full",
+            "source": {
+              "type": "query",
+              "query": [
+                "select ",
+                "b.ip_supplier,",
+                "b.devsuborg,",
+                "b.old_family",
+                "from [v_ipg_family_gladius] as b"
+              ],
+              "dataSource": "Custom"
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select ",
+                  "b.ip_supplier,",
+                  "b.devsuborg,",
+                  "b.old_family",
+                  "from [v_ipg_family_gladius] as b</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "select ",
+              "b.ip_supplier,",
+              "b.devsuborg,",
+              "b.old_family",
+              "from [v_ipg_family_gladius] as b"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "Gladius"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select ",
+              "b.ip_supplier,",
+              "b.devsuborg,",
+              "b.old_family",
+              "from [v_ipg_family_gladius] as b</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "V_DIM_IntelWWSeqNbr",
+        "columns": [
+          {
+            "name": "Intel Year-Work Week",
+            "dataType": "int64",
+            "sourceColumn": "Intel Year-Work Week",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "type": "calculated",
+            "name": "WWSeqNbr",
+            "dataType": "int64",
+            "isDataTypeInferred": true,
+            "expression": "CALCULATE(COUNTROWS(V_DIM_IntelWWSeqNbr), V_DIM_IntelWWSeqNbr[Intel Year-Work Week]<=EARLIER(V_DIM_IntelWWSeqNbr[Intel Year-Work Week]))"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "V_DIM_IntelWWSeqNbr",
+            "dataView": "full",
+            "source": {
+              "type": "query",
+              "query": [
+                "select distinct [Intel Year-Work Week] from [V_TIME_DAY_CachedTable]",
+                "order by [Intel Year-Work Week] desc"
+              ],
+              "dataSource": "Custom"
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select distinct [Intel Year-Work Week] from [V_TIME_DAY_CachedTable]",
+                  "order by [Intel Year-Work Week] desc</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "select distinct [Intel Year-Work Week] from [V_TIME_DAY_CachedTable]",
+              "order by [Intel Year-Work Week] desc"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "V_DIM_IntelWWSeqNbr"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select distinct [Intel Year-Work Week] from [V_TIME_DAY_CachedTable]",
+              "order by [Intel Year-Work Week] desc</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "QueryIntelCalendar",
+        "columns": [
+          {
+            "name": "Intel Year-Work Week",
+            "dataType": "int64",
+            "sourceColumn": "Intel Year-Work Week",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "SubmittedYear",
+            "dataType": "string",
+            "sourceColumn": "SubmittedYear",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "intel Quarter",
+            "dataType": "string",
+            "sourceColumn": "intel Quarter",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "intelquarter",
+            "dataType": "string",
+            "sourceColumn": "intelquarter",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "Intel Month",
+            "dataType": "int64",
+            "sourceColumn": "Intel Month",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "currentww",
+            "dataType": "int64",
+            "sourceColumn": "currentww",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "type": "calculated",
+            "name": "Intel Month Name",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": "If([Intel Month] = 1, \"Jan\", if([Intel Month] = 2, \"Feb\", if([Intel Month]=3, \"Mar\", if([Intel Month] = 4, \"Apr\", if([Intel Month]=5, \"May\", If([Intel Month]=6, \"Jun\", If([Intel Month]=7, \"Jul\", if([Intel Month]=8, \"Aug\", if([Intel Month]=9, \"Sept\", if([Intel Month]=10, \"Oct\", if([Intel Month]=11, \"Nov\", if([Intel Month]=12, \"Dec\", blank()))))))))))))"
+          },
+          {
+            "type": "calculated",
+            "name": "Year_Quarter",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": "QueryIntelCalendar[SubmittedYear]&[Intel Quarter]"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "QueryIntelCalendar",
+            "dataView": "full",
+            "source": {
+              "type": "query",
+              "query": [
+                "select distinct [Intel Year-Work Week]",
+                ", left([Intel Year-Work Week], 4) as SubmittedYear ",
+                ",[intel Quarter]",
+                ",right([intel Quarter],1) as [intelquarter]",
+                ",[Intel Month]",
+                ",datepart(ww,getutcdate()) as [currentww]",
+                "from [V_TIME_DAY_CachedTable]",
+                "order by [Intel Year-Work Week] desc"
+              ],
+              "dataSource": "Custom"
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select distinct [Intel Year-Work Week]",
+                  ", left([Intel Year-Work Week], 4) as SubmittedYear ",
+                  ",[intel Quarter]",
+                  ",right([intel Quarter],1) as [intelquarter]",
+                  ",[Intel Month]",
+                  ",datepart(ww,getutcdate()) as [currentww]",
+                  "from [V_TIME_DAY_CachedTable]",
+                  "order by [Intel Year-Work Week] desc</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "select distinct [Intel Year-Work Week]",
+              ", left([Intel Year-Work Week], 4) as SubmittedYear ",
+              ",[intel Quarter]",
+              ",right([intel Quarter],1) as [intelquarter]",
+              ",[Intel Month]",
+              ",datepart(ww,getutcdate()) as [currentww]",
+              "from [V_TIME_DAY_CachedTable]",
+              "order by [Intel Year-Work Week] desc"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "QueryIntelCalendar"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select distinct [Intel Year-Work Week]",
+              ", left([Intel Year-Work Week], 4) as SubmittedYear ",
+              ",[intel Quarter]",
+              ",right([intel Quarter],1) as [intelquarter]",
+              ",[Intel Month]",
+              ",datepart(ww,getutcdate()) as [currentww]",
+              "from [V_TIME_DAY_CachedTable]",
+              "order by [Intel Year-Work Week] desc</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "DynamicARCalendar",
+        "columns": [
+          {
+            "type": "calculatedTableColumn",
+            "name": "Category",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[Category]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "CategoryOrder",
+            "dataType": "int64",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[CategoryOrder]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "WW",
+            "dataType": "int64",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[WW]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "Intel_Month_Name",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[Intel_Month_Name]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "Intel_Month_Nbr",
+            "dataType": "int64",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[Intel_Month_Nbr]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "Quarter",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[Quarter]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "Year",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[Year]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "ID",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[ID]"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "CalculatedTable 1",
+            "source": {
+              "type": "calculated",
+              "expression": [
+                "",
+                "VAR currentww = MAX(QueryAR[currentww])",
+                "VAR prevWW = currentww - 1",
+                "",
+                "/* snapshot 52 ww until now */",
+                "VAR _minus_52 = currentww - 52",
+                "VAR _52_WW = IF(",
+                "    value(RIGHT(_minus_52,2)) > 52,",
+                "    _minus_52 - 48, _minus_52)    /* minus 42 because from 100 */",
+                "    ",
+                "/* snapshot of 13 ww until now*/",
+                "VAR _minus_13 = currentww - 13",
+                "VAR _13_WW = IF(",
+                "    VALUE(RIGHT(_minus_13, 2)) > 52,",
+                "    _minus_13 - 48, _minus_13)",
+                "",
+                "/*snapshot of 4 ww until now*/",
+                "VAR _minus_4 = currentww - 4",
+                "VAR _4_WW = IF(",
+                "    VALUE(RIGHT(_minus_4,2 )) > 52,",
+                "    _minus_4 - 48, _minus_4)",
+                "",
+                "",
+                "RETURN",
+                "",
+                "\tUNION(",
+                "\t",
+                "\tSELECTCOLUMNS(QueryAR,",
+                "\t\t\"Category\", \"All\",",
+                "\t\t\"CategoryOrder\", 5,",
+                "\t\t\"WW\", QueryAR[ww_submitted_date_num],",
+                "\t\t\"Intel_Month_Name\", QueryAR[Intel Month],",
+                "\t\t\"Intel_Month_Nbr\", QueryAR[IntelMonthNbr],",
+                "\t\t\"Quarter\", RIGHT(QueryAR[SubmittedYear_Quarter], 2),",
+                "\t\t\"Year\", QueryAR[SubmittedYear], ",
+                "\t\t\"ID\", QueryAR[UniqueID]",
+                "\t\t),",
+                "\t\t",
+                "\t\t",
+                "\tSELECTCOLUMNS(FILTER(QueryAR, QueryAR[ww_submitted_date_num] > _52_WW),",
+                "\t\t\"Category\", \"Last 52 WWs\",",
+                "\t\t\"CategoryOrder\", 4,",
+                "\t\t\"WW\", QueryAR[ww_submitted_date_num],",
+                "\t\t\"Intel_Month_Name\", QueryAR[Intel Month],",
+                "\t\t\"Intel_Month_Nbr\", QueryAR[IntelMonthNbr],",
+                "\t\t\"Quarter\", RIGHT(QueryAR[SubmittedYear_Quarter], 2),",
+                "\t\t\"Year\", QueryAR[SubmittedYear],",
+                "\t\t\"ID\", QueryAR[UniqueID]),",
+                "\t\t",
+                "\tSELECTCOLUMNS(FILTER(QueryAR, QueryAR[ww_submitted_date_num] > _13_WW),",
+                "\t\t\"Category\", \"Last 13 WWs\",",
+                "\t\t\"CategoryOrder\", 3,",
+                "\t\t\"WW\", QueryAR[ww_submitted_date_num],",
+                "\t\t\"Intel_Month_Name\", QueryAR[Intel Month],",
+                "\t\t\"Intel_Month_Nbr\", QueryAR[IntelMonthNbr],",
+                "\t\t\"Quarter\", RIGHT(QueryAR[SubmittedYear_Quarter], 2),",
+                "\t\t\"Year\", QueryAR[SubmittedYear],",
+                "\t\t\"ID\", QueryAR[UniqueID]),",
+                "\t\t",
+                "\tSELECTCOLUMNS(FILTER(QueryAR, QueryAR[ww_submitted_date_num] > _4_WW),",
+                "\t\t\"Category\", \"Last 4 WWs\",",
+                "\t\t\"CategoryOrder\", 2,",
+                "\t\t\"WW\", QueryAR[ww_submitted_date_num],",
+                "\t\t\"Intel_Month_Name\", QueryAR[Intel Month],",
+                "\t\t\"Intel_Month_Nbr\", QueryAR[IntelMonthNbr],",
+                "\t\t\"Quarter\", RIGHT(QueryAR[SubmittedYear_Quarter], 2),",
+                "\t\t\"Year\", QueryAR[SubmittedYear],",
+                "\t\t\"ID\", QueryAR[UniqueID]),",
+                "\t\t",
+                "\tSELECTCOLUMNS(FILTER(QueryAR, QueryAR[ww_submitted_date_num] > prevWW),",
+                "\t\t\"Category\", \"Last 1 WWs\",",
+                "\t\t\"CategoryOrder\", 1,",
+                "\t\t\"WW\", QueryAR[ww_submitted_date_num],",
+                "\t\t\"Intel_Month_Name\", QueryAR[Intel Month],",
+                "\t\t\"Intel_Month_Nbr\", QueryAR[IntelMonthNbr],",
+                "\t\t\"Quarter\", RIGHT(QueryAR[SubmittedYear_Quarter], 2),",
+                "\t\t\"Year\", QueryAR[SubmittedYear],",
+                "\t\t\"ID\", QueryAR[UniqueID])",
+                "",
+                "",
+                "",
+                "\t)",
+                "\t",
+                ""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "SoCReleaseCentral",
+        "columns": [
+          {
+            "name": "release.product_type",
+            "dataType": "string",
+            "sourceColumn": "release.product_type",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "release.name",
+            "dataType": "string",
+            "sourceColumn": "release.name",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "family",
+            "dataType": "string",
+            "sourceColumn": "family",
+            "sourceProviderType": "VarChar"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "SoCReleaseCentral",
+            "dataView": "full",
+            "source": {
+              "type": "query",
+              "query": [
+                "select",
+                "[release.product_type]",
+                ",[release.name]",
+                ",[family]",
+                "from[ES.release_central.release]",
+                "where [release.product_type] like '%soc%'"
+              ],
+              "dataSource": "Custom"
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select",
+                  "[release.product_type]",
+                  ",[release.name]",
+                  ",[family]",
+                  "from[ES.release_central.release]",
+                  "where [release.product_type] like '%soc%'</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "select",
+              "[release.product_type]",
+              ",[release.name]",
+              ",[family]",
+              "from[ES.release_central.release]",
+              "where [release.product_type] like '%soc%'"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "SoCReleaseCentral"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select",
+              "[release.product_type]",
+              ",[release.name]",
+              ",[family]",
+              "from[ES.release_central.release]",
+              "where [release.product_type] like '%soc%'</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IPCatalogReleaseCentral",
+        "columns": [
+          {
+            "name": "release.product_type",
+            "dataType": "string",
+            "sourceColumn": "release.product_type",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "release.name",
+            "dataType": "string",
+            "sourceColumn": "release.name",
+            "sourceProviderType": "VarChar"
+          },
+          {
+            "name": "release.lead_product",
+            "dataType": "string",
+            "sourceColumn": "release.lead_product",
+            "sourceProviderType": "VarChar"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "IPCatalogReleaseCentral",
+            "dataView": "full",
+            "source": {
+              "type": "query",
+              "query": [
+                "select",
+                "[release.product_type]",
+                ",[release.name]",
+                ",[release.lead_product]",
+                "from[ES.release_central.release]",
+                "where [release.product_type] in 'ip.config'"
+              ],
+              "dataSource": "Custom"
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select",
+                  "[release.product_type]",
+                  ",[release.name]",
+                  ",[release.lead_product]",
+                  "from[ES.release_central.release]",
+                  "where [release.product_type] in 'ip.config'</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "select",
+              "[release.product_type]",
+              ",[release.name]",
+              ",[release.lead_product]",
+              "from[ES.release_central.release]",
+              "where [release.product_type] in 'ip.config'"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "IPCatalogReleaseCentral"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>select",
+              "[release.product_type]",
+              ",[release.name]",
+              ",[release.lead_product]",
+              "from[ES.release_central.release]",
+              "where [release.product_type] in 'ip.config'</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+            ]
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "55cc7c6f-77f7-4bbf-bfb8-e7dee760db36",
+        "fromTable": "DynamicAxis",
+        "fromColumn": "AxisId",
+        "toTable": "QueryAR",
+        "toColumn": "UniqueID",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "4362bfb7-585c-40a7-acfd-1af619e0e93d",
+        "fromTable": "DynamicLegend",
+        "fromColumn": "LegendId",
+        "toTable": "QueryAR",
+        "toColumn": "UniqueID",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "47d7890a-3f8d-4dcd-aa3a-c4addcdf0473",
+        "fromTable": "QueryAR",
+        "fromColumn": "IPFamily",
+        "toTable": "Gladius",
+        "toColumn": "old_family",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "5b83b9e8-696e-4cf0-b553-5c10827a07d5",
+        "fromTable": "QueryAR",
+        "fromColumn": "ww_submitted_date_num",
+        "toTable": "QueryIntelCalendar",
+        "toColumn": "Intel Year-Work Week"
+      },
+      {
+        "name": "f05c2172-f36a-4445-9ff7-0bcca3e97aad",
+        "fromTable": "DynamicARCalendar",
+        "fromColumn": "ID",
+        "toTable": "QueryAR",
+        "toColumn": "UniqueID",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "dcced3ec-5cee-42d4-9c46-66e1cee7a431",
+        "toCardinality": "many",
+        "fromTable": "SoCReleaseCentral",
+        "fromColumn": "release.name",
+        "toTable": "QueryAR",
+        "toColumn": "from_release",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "4b4b1191-9463-4150-b02c-749fa1035fbf",
+        "fromTable": "QueryAR",
+        "fromColumn": "release",
+        "toTable": "IPCatalogReleaseCentral",
+        "toColumn": "release.name"
+      }
+    ],
+    "roles": [
+      {
+        "name": "IPG_InternalUsers",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "AMR\\IPG_Dashboard_SuperUsers",
+            "memberId": "S-1-5-21-725345543-602162358-527237240-4603439"
+          }
+        ]
+      },
+      {
+        "name": "IPG_Developers",
+        "modelPermission": "administrator",
+        "members": [
+          {
+            "memberName": "AMR\\IPG_Dashboard_Developers",
+            "memberId": "S-1-5-21-725345543-602162358-527237240-4603422"
+          }
+        ]
+      },
+      {
+        "name": "IPG_ExternalUsers",
+        "modelPermission": "read",
+        "members": [
+          {
+            "memberName": "AMR\\IPG_Dashboard_Users",
+            "memberId": "S-1-5-21-725345543-602162358-527237240-4603440"
+          }
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "name": "ClientCompatibilityLevel",
+        "value": "600"
+      }
+    ]
+  },
+  "id": "SemanticModel"
+}
